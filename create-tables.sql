@@ -1,0 +1,3 @@
+create table exercise (id  bigserial not null, created timestamp, updated timestamp, name varchar(255), notes text, user_id varchar(255), primary key (id));
+create table set (id  bigserial not null, created timestamp, updated timestamp, lbs int4 not null, notes varchar(255), reps int4 not null, exercise_id int8, primary key (id));
+alter table if exists set add constraint FK2te7822b4avf2plco3kw8m6ep foreign key (exercise_id) references exercise;
