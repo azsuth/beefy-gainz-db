@@ -1,4 +1,4 @@
-create user exercise_user password 'exercise_temp_password';
+create user exercise_user password 'exercise_dev_password';
 
 grant select, insert, update, delete on exercise to exercise_user;
 grant select, insert, update, delete on set to exercise_user;
