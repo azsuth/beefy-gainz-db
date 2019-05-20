@@ -40,7 +40,10 @@ spec:
               subPath: postgres
           env:
             - name: POSTGRES_PASSWORD
-              value: azsuth
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-root-password
+                  key: password
             - name: POSTGRES_DB
               value: exercise
 
@@ -87,7 +90,7 @@ kind: Service
 metadata:
   name: adminer-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     component: adminer
   ports:
