@@ -19,6 +19,9 @@ before_install:
   - gcloud container clusters get-credentials beefy-gainz-cluster-1
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
+script:
+  - echo "No script steps, skipping"
+
 after_success:
   - docker image build -t azsuth/beefy-gainz-exercise-db:latest -t azsuth/beefy-gainz-exercise-db:$SHA .
   - docker push azsuth/beefy-gainz-exercise-db:latest
