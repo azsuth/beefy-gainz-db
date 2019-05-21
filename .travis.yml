@@ -6,6 +6,7 @@ services:
 env:
   global:
     - SHA=$(git rev-parse HEAD)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
@@ -13,9 +14,14 @@ before_install:
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file service-account.json
-
-script:
-  - docker image build -t $DOCKER_USERNAME/$DOCKER_IMAGE:latest -t $DOCKER_USERNAME/$DOCKER_IMAGE:$SHA .
+  - gcloud config set project beefy-gainz-1555366059329
+  - gcloud config set compute/zone us-central1-a
+  - gcloud container clusters get-credentials beefy-gainz-cluster-1
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push $DOCKER_USERNAME/$DOCKER_IMAGE:latest
-  - docker push $DOCKER_USERNAME/$DOCKER_IMAGE:$SHA
+
+after_success:
+  - docker image build -t azsuth/beefy-gainz-exercise-db:latest -t azsuth/beefy-gainz-exercise-db:$SHA .
+  - docker push azsuth/beefy-gainz-exercise-db:latest
+  - docker push azsuth/beefy-gainz-exercise-db:$SHA
+  - kubectl apply -f k8s.yml
+  - kubectl set image deployments/exercise-db-deployment exercise-db=azsuth/beefy-gainz-exercise-db:$SHA
